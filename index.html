@@ -8,12 +8,20 @@
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     
     <style>
+        /* CSS-Variablen für ein dynamisches Farbschema */
+        :root {
+            --primary-color: #470000;
+            --secondary-color: #300000;
+            --dark-color: #000000;
+            --light-text-color: #fff;
+            --border-color: #470000;
+        }
+
         /* Bestehender CSS-Code für die Hauptseite */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
-            color: #470000;
-            background-color: #000000;
+            background-color: var(--dark-color);
         }
         
         #particles-js {
@@ -49,9 +57,11 @@
         }
 
         .header h1 {
-            color: #470000;
+            /* KORREKTUR: Schriftfarbe direkt an primary-color binden */
+            color: var(--primary-color);
             font-weight: 300;
             letter-spacing: 2px;
+            font-family: 'Arial', sans-serif;
         }
 
         .profile-icon {
@@ -59,7 +69,7 @@
             height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #470000;
+            border: 3px solid var(--border-color);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
             transition: transform 0.3s ease-in-out;
             cursor: default;
@@ -94,6 +104,10 @@
             border: 2px solid black;
         }
 
+        .info-box.editable-mode {
+            border: 2px dashed #4CAF50;
+        }
+        
         .header:hover .info-box {
             opacity: 1;
             visibility: visible;
@@ -103,11 +117,11 @@
         .info-box p {
             margin: 5px 0;
             white-space: nowrap; 
-            color: #300000;
+            color: var(--secondary-color);
         }
         
         .info-box a {
-            color: #300000;
+            color: var(--secondary-color);
             text-decoration: none;
             word-break: break-all;
             display: inline-block;
@@ -129,7 +143,7 @@
             padding: 12px 25px;
             font-size: 16px;
             font-weight: 600;
-            color: #fff;
+            color: var(--light-text-color);
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -145,12 +159,9 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
-        .tiktok-btn { background-color: #300000; }
-        .youtube-btn { background-color: #000000; }
-        .instagram-btn { background-color: #300000; }
-        .twitter-btn { background-color: #000000; }
-        .twitch-btn { background-color: #300000; }
-        .website-btn { background-color: #000000; }
+        /* Angepasst, um CSS-Variablen zu verwenden */
+        .tiktok-btn, .instagram-btn, .twitch-btn { background-color: var(--primary-color); }
+        .youtube-btn, .twitter-btn, .website-btn { background-color: var(--secondary-color); }
 
         .menu-container {
             position: fixed;
@@ -174,7 +185,7 @@
             align-items: center;
             cursor: pointer;
             transition: transform 0.3s;
-            border: 2px solid #470000;
+            border: 2px solid var(--border-color);
         }
 
         .menu-toggle:hover {
@@ -354,6 +365,80 @@
         .hidden {
             display: none;
         }
+
+        /* NEU: Stil für die Account-Info-Box */
+        .account-info-box {
+            position: absolute;
+            top: 50%;
+            left: -100px; /* Positionierung neben dem Button */
+            transform: translateY(-50%);
+            background-color: rgba(30, 30, 30, 0.95);
+            color: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            min-width: 250px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .account-info-box p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .account-info-box .warning {
+            color: #ff6347; /* Tomatenrot */
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        
+        /* NEU: Checkbox-Stil */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-top: -5px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-container input {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        .checkbox-container label {
+            margin: 0;
+        }
+        
+        /* NEU: Stil für den Farbwechsler */
+        .color-changer-container {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 5px;
+            background-color: rgba(50, 50, 50, 0.8);
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        
+        .color-changer-container input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            background: none;
+            cursor: pointer;
+        }
+        
+        .color-changer-container input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        
+        .color-changer-container input[type="color"]::-webkit-color-swatch {
+            border: 2px solid #ccc;
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
@@ -363,23 +448,37 @@
     <div class="content-wrapper">
         <div class="menu-container" id="menuContainer">
             <div class="menu-toggle" id="menuToggle">
-                <img src="pfp.jpg" alt="Menü">
+                <img src="pfp.jpg" alt="Menü" id="menuTogglePic">
             </div>
             <div class="settings-menu" id="settingsMenu">
-                <a href="#" class="settings-button">Test</a>
-                <a href="#" class="settings-button">Test 2</a>
-                <a href="#" class="settings-button">Test 3</a>
+                <a href="#" id="testButton" class="settings-button">Test</a>
+                <a href="#" id="colorChangerButton" class="settings-button">Farbe ändern</a>
+                <div id="colorChangerContainer" class="color-changer-container">
+                    <label for="colorPicker" style="color: #fff; font-size: 14px;">Wähle eine Farbe:</label>
+                    <input type="color" id="colorPicker" value="#470000">
+                </div>
                 <a href="#" id="loginButton" class="settings-button hidden">Login</a>
                 <a href="#" id="logoutButton" class="settings-button">Logout</a>
                 <a href="#" id="deleteAccountButton" class="settings-button">Konto löschen</a>
+                <a href="#" id="editInfoBoxButton" class="settings-button">Infobox bearbeiten</a>
+                <a href="#" id="changeProfilePicButton" class="settings-button">Profilbild ändern</a>
+                <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
+                
+                <div id="accountInfoBox" class="account-info-box">
+                    <h4>Konto-Informationen</h4>
+                    <p><strong>Benutzername:</strong> <span id="accountUsername"></span></p>
+                    <p><strong>Passwort:</strong> <span id="accountPassword"></span></p>
+                    <p><strong>PIN:</strong> <span id="accountPin"></span></p>
+                    <p class="warning">⚠️ Aus Sicherheitsgründen wird das Passwort im Klartext angezeigt. Dies ist nur ein Beispiel.</p>
+                </div>
             </div>
         </div>
         
         <div class="main-container">
             <div class="header">
-                <img src="pfp.jpg" alt="Profilbild" class="profile-icon">
+                <img src="pfp.jpg" alt="Profilbild" class="profile-icon" id="profileIcon">
                 <h1 id="profileName">Avast Mods</h1>
-                <div class="info-box">
+                <div class="info-box" id="infoBox">
                     <p id="ownerInfo">Owner: Maximilian Mustermann</p>
                     <p>Alter: 18</p>
                     <p>Kontakt:</p>
@@ -436,6 +535,10 @@
                     <label for="loginPin">4-stelliger PIN:</label>
                     <input type="password" id="loginPin" name="loginPin" maxlength="4" required>
                 </div>
+                <div class="checkbox-container">
+                    <input type="checkbox" id="saveLoginData">
+                    <label for="saveLoginData">Login-Daten speichern</label>
+                </div>
                 <button type="submit" id="loginSubmit">Anmelden</button>
             </div>
 
@@ -473,20 +576,34 @@
     </div>
 
     <script>
+        // Globale Variable, um den angemeldeten Benutzer zu speichern
+        let loggedInUser = null;
+
         // Bestehendes Skript für Partikel und Menü
         const menuToggle = document.getElementById('menuToggle');
         const settingsMenu = document.getElementById('settingsMenu');
+        const colorChangerContainer = document.getElementById('colorChangerContainer');
+
         menuToggle.addEventListener('click', () => {
             settingsMenu.classList.toggle('active');
+            // Schließe andere Fenster, wenn das Hauptmenü geöffnet wird
+            accountInfoBox.style.display = 'none';
+            colorChangerContainer.style.display = 'none';
         });
+
         document.addEventListener('click', (event) => {
             const isClickInsideMenu = menuToggle.contains(event.target) || settingsMenu.contains(event.target);
-            if (!isClickInsideMenu && settingsMenu.classList.contains('active')) {
+            const isClickInsideAccountInfo = accountInfoBox.contains(event.target);
+            const isClickInsideColorChanger = colorChangerContainer.contains(event.target);
+            
+            if (!isClickInsideMenu && !isClickInsideAccountInfo && !isClickInsideColorChanger && settingsMenu.classList.contains('active')) {
                 settingsMenu.classList.remove('active');
+                accountInfoBox.style.display = 'none';
+                colorChangerContainer.style.display = 'none';
             }
         });
 
-        // NEUES SKRIPT für das Modal, Login und Registrierung
+        // NEUES SKRIPT für das Modal, Login, Registrierung und Info-Box Bearbeitung
         const contentWrapper = document.querySelector('.content-wrapper');
         const menuContainer = document.getElementById('menuContainer');
         const loginModal = document.getElementById('loginModal');
@@ -503,6 +620,34 @@
         const registerForm = document.getElementById('registerForm');
         const loginSubmit = document.getElementById('loginSubmit');
         const registerSubmit = document.getElementById('registerSubmit');
+        
+        // NEU: Input-Felder für den Login-Teil
+        const loginUsernameInput = document.getElementById('loginUsername');
+        const loginPasswordInput = document.getElementById('loginPassword');
+        const loginPinInput = document.getElementById('loginPin');
+        const saveLoginDataCheckbox = document.getElementById('saveLoginData');
+
+        // NEU: Elemente für die Info-Box-Bearbeitung
+        const infoBox = document.getElementById('infoBox');
+        const editInfoBoxButton = document.getElementById('editInfoBoxButton');
+        
+        // NEU: Elemente für das Profilbild
+        const profileIcon = document.getElementById('profileIcon');
+        const menuTogglePic = document.getElementById('menuTogglePic');
+        const changeProfilePicButton = document.getElementById('changeProfilePicButton');
+        const profilePicInput = document.getElementById('profilePicInput');
+
+        // NEU: Elemente für die Konto-Info-Box
+        const testButton = document.getElementById('testButton');
+        const accountInfoBox = document.getElementById('accountInfoBox');
+        const accountUsername = document.getElementById('accountUsername');
+        const accountPassword = document.getElementById('accountPassword');
+        const accountPin = document.getElementById('accountPin');
+        
+        // NEU: Elemente für den Farbwechsler
+        const colorChangerButton = document.getElementById('colorChangerButton');
+        const colorPicker = document.getElementById('colorPicker');
+
 
         // Funktion zum Umschalten zwischen Formularen im Modal
         function showForm(formToShow, tabToActivate) {
@@ -563,22 +708,40 @@
         // Simulierter Login-Prozess
         loginSubmit.addEventListener('click', (e) => {
             e.preventDefault();
-            const username = loginUsername.value;
-            const password = loginPassword.value;
-            const pin = loginPin.value;
+            const username = loginUsernameInput.value;
+            const password = loginPasswordInput.value;
+            const pin = loginPinInput.value;
 
             // Suche den Benutzer in der "Datenbank"
             const user = users.find(u => u.username === username);
 
             if (user && user.password === password && user.pin === pin) {
+                // NEU: Speichere den angemeldeten Benutzer
+                loggedInUser = user;
+                
+                // NEU: Speichere Login-Daten, wenn Checkbox aktiviert ist
+                if (saveLoginDataCheckbox.checked) {
+                    localStorage.setItem('savedUsername', username);
+                    localStorage.setItem('savedPassword', password);
+                    localStorage.setItem('savedPin', pin);
+                    alert('Login-Daten wurden gespeichert.');
+                } else {
+                    // Lösche gespeicherte Daten, falls Checkbox deaktiviert ist
+                    localStorage.removeItem('savedUsername');
+                    localStorage.removeItem('savedPassword');
+                    localStorage.removeItem('savedPin');
+                }
+
                 if (user.role === 'owner') {
                     alert('Login erfolgreich! Willkommen, Owner AvastMods!');
                     profileName.textContent = 'Avast Mods (Owner)';
                     ownerInfo.textContent = 'Owner: Avast Mods';
+                    editInfoBoxButton.style.display = 'block'; // Zeige den Bearbeitungs-Button
                 } else {
                     alert('Login erfolgreich! Willkommen, ' + username + '!');
                     profileName.textContent = 'Willkommen, ' + username;
                     ownerInfo.textContent = '';
+                    editInfoBoxButton.style.display = 'none'; // Verstecke den Bearbeitungs-Button
                 }
                 
                 showMainContent();
@@ -595,26 +758,40 @@
              ownerInfo.textContent = 'Owner: Maximilian Mustermann';
              loginButton.classList.remove('hidden');
              logoutButton.classList.add('hidden');
+             editInfoBoxButton.style.display = 'none'; // Verstecke den Bearbeitungs-Button
+             // NEU: Setze den angemeldeten Benutzer zurück
+             loggedInUser = null;
+             // NEU: Lösche gespeicherte Login-Daten beim Logout
+             localStorage.removeItem('savedUsername');
+             localStorage.removeItem('savedPassword');
+             localStorage.removeItem('savedPin');
              showLoginModal();
         });
 
         // NEU: Logik zum Löschen des Kontos
         deleteAccountButton.addEventListener('click', () => {
-            const usernameToDelete = prompt('Bitte gib deinen Benutzernamen ein, um die Löschung zu bestätigen.');
-            const userIndex = users.findIndex(u => u.username === usernameToDelete);
+            if (!loggedInUser) {
+                alert('Bitte melde dich zuerst an, um dein Konto zu löschen.');
+                return;
+            }
 
-            if (userIndex !== -1) {
+            const usernameToDelete = prompt('Bitte gib deinen Benutzernamen ein, um die Löschung zu bestätigen.');
+            if (usernameToDelete === loggedInUser.username) {
                 const isConfirmed = confirm('Bist du sicher, dass du dein Konto unwiderruflich löschen möchtest? Dieser Schritt kann nicht rückgängig gemacht werden!');
                 if (isConfirmed) {
-                    users.splice(userIndex, 1);
-                    saveUsers();
-                    alert('Dein Konto wurde erfolgreich gelöscht. Du wirst nun abgemeldet.');
-                    showLoginModal();
+                    const userIndex = users.findIndex(u => u.username === usernameToDelete);
+                    if (userIndex !== -1) {
+                         users.splice(userIndex, 1);
+                         saveUsers();
+                         alert('Dein Konto wurde erfolgreich gelöscht. Du wirst nun abgemeldet.');
+                         loggedInUser = null; // Setze den Benutzer zurück
+                         showLoginModal();
+                    }
                 } else {
                     alert('Die Löschung wurde abgebrochen.');
                 }
             } else {
-                alert('Benutzername nicht gefunden. Keine Löschung durchgeführt.');
+                alert('Benutzername stimmt nicht überein. Keine Löschung durchgeführt.');
             }
         });
 
@@ -670,6 +847,155 @@
                 }
             });
         });
+
+        // NEU: Logik zum Bearbeiten und Speichern der Infobox
+        let isEditing = false;
+        editInfoBoxButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!isEditing) {
+                // Bearbeitungsmodus aktivieren
+                infoBox.setAttribute('contenteditable', 'true');
+                infoBox.classList.add('editable-mode');
+                editInfoBoxButton.textContent = 'Speichern';
+                alert('Bearbeitungsmodus aktiviert. Du kannst die Infobox jetzt direkt bearbeiten.');
+                isEditing = true;
+            } else {
+                // Bearbeitungsmodus deaktivieren und speichern
+                infoBox.setAttribute('contenteditable', 'false');
+                infoBox.classList.remove('editable-mode');
+                editInfoBoxButton.textContent = 'Infobox bearbeiten';
+                
+                // Speichere den Inhalt im localStorage
+                localStorage.setItem('infoBoxContent', infoBox.innerHTML);
+                alert('Änderungen gespeichert.');
+                isEditing = false;
+            }
+        });
+
+        // NEU: Lade den gespeicherten Infobox-Inhalt beim Start
+        function loadInfoBoxContent() {
+            const savedContent = localStorage.getItem('infoBoxContent');
+            if (savedContent) {
+                infoBox.innerHTML = savedContent;
+            }
+        }
+        loadInfoBoxContent();
+        
+        // NEU: Logik zum Ändern des Profilbildes
+        changeProfilePicButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            profilePicInput.click(); // Öffnet den Dateiauswahl-Dialog
+        });
+
+        profilePicInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const newImageSrc = e.target.result;
+                    // Aktualisiere beide Profilbilder
+                    profileIcon.src = newImageSrc;
+                    menuTogglePic.src = newImageSrc;
+                    // Speichere das neue Bild im localStorage
+                    localStorage.setItem('profilePic', newImageSrc);
+                    alert('Profilbild wurde erfolgreich geändert.');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // NEU: Lade das gespeicherte Profilbild beim Start der Seite
+        function loadProfilePic() {
+            const savedPic = localStorage.getItem('profilePic');
+            if (savedPic) {
+                profileIcon.src = savedPic;
+                menuTogglePic.src = savedPic;
+            }
+        }
+        loadProfilePic();
+
+        // NEU: Logik für den "Test"-Button (zeigt Kontoinformationen)
+        testButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!loggedInUser) {
+                alert('Bitte melde dich zuerst an.');
+                return;
+            }
+
+            // Fülle die Info-Box mit den Daten des angemeldeten Benutzers
+            accountUsername.textContent = loggedInUser.username;
+            accountPassword.textContent = loggedInUser.password;
+            accountPin.textContent = loggedInUser.pin;
+
+            // Zeige die Box an oder verstecke sie, wenn sie bereits sichtbar ist
+            const isVisible = accountInfoBox.style.display === 'block';
+            accountInfoBox.style.display = isVisible ? 'none' : 'block';
+        });
+
+        // NEU: Lade gespeicherte Login-Daten, wenn die Seite geladen wird
+        function loadSavedLoginData() {
+            const savedUsername = localStorage.getItem('savedUsername');
+            const savedPassword = localStorage.getItem('savedPassword');
+            const savedPin = localStorage.getItem('savedPin');
+
+            if (savedUsername && savedPassword && savedPin) {
+                loginUsernameInput.value = savedUsername;
+                loginPasswordInput.value = savedPassword;
+                loginPinInput.value = savedPin;
+                saveLoginDataCheckbox.checked = true;
+            }
+        }
+        loadSavedLoginData();
+        
+        // NEU: Logik für den Farbwechsler
+        colorChangerButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Schalte die Anzeige des Farbwählers um
+            const isVisible = colorChangerContainer.style.display === 'flex';
+            colorChangerContainer.style.display = isVisible ? 'none' : 'flex';
+        });
+
+        colorPicker.addEventListener('input', (e) => {
+            const selectedColor = e.target.value;
+            // Setze die primäre Farbe
+            document.documentElement.style.setProperty('--primary-color', selectedColor);
+
+            // Berechne eine dunklere Farbe für die Sekundärfarbe und den Text
+            const rgb = hexToRgb(selectedColor);
+            if (rgb) {
+                const darkenedColor = `rgb(${Math.max(0, rgb.r - 20)}, ${Math.max(0, rgb.g - 20)}, ${Math.max(0, rgb.b - 20)})`;
+                document.documentElement.style.setProperty('--secondary-color', darkenedColor);
+                document.documentElement.style.setProperty('--border-color', selectedColor);
+            }
+            // Speichere die gewählte Farbe in localStorage
+            localStorage.setItem('themeColor', selectedColor);
+        });
+
+        // Funktion zum Konvertieren von Hex in RGB
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        // Lade die gespeicherte Farbe beim Start der Seite
+        function loadTheme() {
+            const savedColor = localStorage.getItem('themeColor');
+            if (savedColor) {
+                document.documentElement.style.setProperty('--primary-color', savedColor);
+                const rgb = hexToRgb(savedColor);
+                if (rgb) {
+                    const darkenedColor = `rgb(${Math.max(0, rgb.r - 20)}, ${Math.max(0, rgb.g - 20)}, ${Math.max(0, rgb.b - 20)})`;
+                    document.documentElement.style.setProperty('--secondary-color', darkenedColor);
+                    document.documentElement.style.setProperty('--border-color', savedColor);
+                    colorPicker.value = savedColor;
+                }
+            }
+        }
+        loadTheme();
 
         // Hinzufügen der particles.js-Initialisierung
         particlesJS('particles-js', {
