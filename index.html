@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avast Mods</title>
+    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <style>
+        /* Bestehender CSS-Code für die Hauptseite */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            color: #470000;
+            background-color: #000000;
+        }
+        
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent; 
+            z-index: -1; 
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1; 
+            display: none; /* Standardmäßig versteckt */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .content-wrapper.visible {
+            display: flex; /* Sichtbar nach dem Login */
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .header h1 {
+            color: #470000;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .profile-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #470000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease-in-out;
+            cursor: default;
+        }
+        
+        .profile-icon:hover {
+            transform: scale(1.05);
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .info-box {
+            background-color: rgba(30, 30, 30, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            max-width: 400px; 
+            text-align: left;
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            transform: translateY(-50%) translateX(20px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.3s ease-in-out;
+            z-index: 2; 
+            border: 2px solid black;
+        }
+
+        .header:hover .info-box {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(-50%) translateX(0);
+        }
+        
+        .info-box p {
+            margin: 5px 0;
+            white-space: nowrap; 
+            color: #300000;
+        }
+        
+        .info-box a {
+            color: #300000;
+            text-decoration: none;
+            word-break: break-all;
+            display: inline-block;
+        }
+        
+        .info-box a:hover {
+            text-decoration: underline;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            max-width: 800px;
+        }
+
+        .social-button {
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: center;
+            min-width: 150px;
+        }
+        
+        .social-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .tiktok-btn { background-color: #300000; }
+        .youtube-btn { background-color: #000000; }
+        .instagram-btn { background-color: #300000; }
+        .twitter-btn { background-color: #000000; }
+        .twitch-btn { background-color: #300000; }
+        .website-btn { background-color: #000000; }
+
+        .menu-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: none; /* Menü standardmäßig versteckt */
+        }
+
+        .menu-container.visible {
+            display: block; /* Menü sichtbar nach dem Login */
+        }
+
+        .menu-toggle {
+            width: 40px;
+            height: 40px;
+            background-color: transparent;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: 2px solid #470000;
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-toggle img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        .settings-menu {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background-color: rgba(30, 30, 30, 0.9);
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            padding: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            animation: fadeIn 0.3s ease-in-out;
+            min-width: 150px;
+            border: 1px solid #333;
+        }
+        
+        .settings-menu.active {
+            display: flex;
+        }
+
+        .settings-button {
+            padding: 8px 10px;
+            font-size: 14px;
+            color: #f0f0f0;
+            background-color: transparent;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            text-align: center;
+        }
+
+        .settings-button:hover {
+            background-color: #222;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* NEUER CSS-Code für das Login-Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex; /* Standardmäßig sichtbar */
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .modal-overlay.hidden {
+            display: none;
+            opacity: 0;
+        }
+
+        .modal-content {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            width: 350px;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .tabs button {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .tabs button.active {
+            color: #fff;
+            border-bottom: 2px solid #fff;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ccc;
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .password-container input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #444;
+            background-color: #2b2b2b;
+            color: #fff;
+            border-radius: 5px;
+            outline: none;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .toggle-password img {
+            width: 20px;
+            height: 20px;
+            filter: invert(50%) sepia(0%) saturate(1%) hue-rotate(334deg) brightness(100%) contrast(100%);
+            transition: filter 0.3s;
+        }
+
+        .toggle-password img:hover {
+            filter: invert(100%) sepia(0%) saturate(1%) hue-rotate(334deg) brightness(100%) contrast(100%);
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            border: none;
+            color: #fff;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="particles-js"></div>
+    
+    <div class="content-wrapper">
+        <div class="menu-container" id="menuContainer">
+            <div class="menu-toggle" id="menuToggle">
+                <img src="pfp.jpg" alt="Menü">
+            </div>
+            <div class="settings-menu" id="settingsMenu">
+                <a href="#" class="settings-button">Test</a>
+                <a href="#" class="settings-button">Test 2</a>
+                <a href="#" class="settings-button">Test 3</a>
+                <a href="#" id="loginButton" class="settings-button hidden">Login</a>
+                <a href="#" id="logoutButton" class="settings-button">Logout</a>
+                <a href="#" id="deleteAccountButton" class="settings-button">Konto löschen</a>
+            </div>
+        </div>
+        
+        <div class="main-container">
+            <div class="header">
+                <img src="pfp.jpg" alt="Profilbild" class="profile-icon">
+                <h1 id="profileName">Avast Mods</h1>
+                <div class="info-box">
+                    <p id="ownerInfo">Owner: Maximilian Mustermann</p>
+                    <p>Alter: 18</p>
+                    <p>Kontakt:</p>
+                    <p><a href="mailto:deine-mail@example.com">deine-mail@example.com</a></p>
+                </div>
+            </div>
+            <div class="button-group">
+                <a href="https://www.tiktok.com/@DEIN-TIKTOK-NAME" class="social-button tiktok-btn" target="_blank">
+                    TikTok
+                </a>
+                <a href="https://www.youtube.com/user/DEIN-YOUTUBE-NAME" class="social-button youtube-btn" target="_blank">
+                    YouTube
+                </a>
+                <a href="https://www.instagram.com/DEIN-INSTAGRAM-NAME" class="social-button instagram-btn" target="_blank">
+                    Instagram
+                </a>
+                <a href="https://twitter.com/DEIN-TWITTER-NAME" class="social-button twitter-btn" target="_blank">
+                    Twitter
+                </a>
+                <a href="https://www.twitch.tv/DEIN-TWITCH-NAME" class="social-button twitch-btn" target="_blank">
+                    Twitch
+                </a>
+                <a href="https://www.deine-website.de" class="social-button website-btn" target="_blank">
+                    Website
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close" id="closeModal">×</span>
+            <div class="tabs">
+                <button id="loginTab" class="active">Login</button>
+                <button id="registerTab">Registrieren</button>
+            </div>
+
+            <div id="loginForm">
+                <h2>Login</h2>
+                <div class="form-group">
+                    <label for="loginUsername">Benutzername:</label>
+                    <input type="text" id="loginUsername" name="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Passwort:</label>
+                    <div class="password-container">
+                        <input type="password" id="loginPassword" name="loginPassword" required>
+                        <span class="toggle-password" data-target="loginPassword">
+                             <img src="https://www.svgrepo.com/show/532354/eye-off.svg" alt="Passwort verbergen">
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="loginPin">4-stelliger PIN:</label>
+                    <input type="password" id="loginPin" name="loginPin" maxlength="4" required>
+                </div>
+                <button type="submit" id="loginSubmit">Anmelden</button>
+            </div>
+
+            <div id="registerForm" class="hidden">
+                <h2>Registrieren</h2>
+                <div class="form-group">
+                    <label for="registerUsername">Benutzername:</label>
+                    <input type="text" id="registerUsername" name="registerUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Passwort:</label>
+                    <div class="password-container">
+                        <input type="password" id="registerPassword" name="registerPassword" required>
+                        <span class="toggle-password" data-target="registerPassword">
+                            <img src="https://www.svgrepo.com/show/532354/eye-off.svg" alt="Passwort verbergen">
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Passwort bestätigen:</label>
+                    <div class="password-container">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <span class="toggle-password" data-target="confirmPassword">
+                            <img src="https://www.svgrepo.com/show/532354/eye-off.svg" alt="Passwort verbergen">
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="registerPin">4-stelliger PIN:</label>
+                    <input type="password" id="registerPin" name="registerPin" maxlength="4" required>
+                </div>
+                <button type="submit" id="registerSubmit">Registrieren</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Bestehendes Skript für Partikel und Menü
+        const menuToggle = document.getElementById('menuToggle');
+        const settingsMenu = document.getElementById('settingsMenu');
+        menuToggle.addEventListener('click', () => {
+            settingsMenu.classList.toggle('active');
+        });
+        document.addEventListener('click', (event) => {
+            const isClickInsideMenu = menuToggle.contains(event.target) || settingsMenu.contains(event.target);
+            if (!isClickInsideMenu && settingsMenu.classList.contains('active')) {
+                settingsMenu.classList.remove('active');
+            }
+        });
+
+        // NEUES SKRIPT für das Modal, Login und Registrierung
+        const contentWrapper = document.querySelector('.content-wrapper');
+        const menuContainer = document.getElementById('menuContainer');
+        const loginModal = document.getElementById('loginModal');
+        const closeModal = document.getElementById('closeModal');
+        const loginButton = document.getElementById('loginButton');
+        const logoutButton = document.getElementById('logoutButton');
+        const deleteAccountButton = document.getElementById('deleteAccountButton');
+        const profileName = document.getElementById('profileName');
+        const ownerInfo = document.getElementById('ownerInfo');
+        
+        const loginTab = document.getElementById('loginTab');
+        const registerTab = document.getElementById('registerTab');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const loginSubmit = document.getElementById('loginSubmit');
+        const registerSubmit = document.getElementById('registerSubmit');
+
+        // Funktion zum Umschalten zwischen Formularen im Modal
+        function showForm(formToShow, tabToActivate) {
+            loginForm.classList.add('hidden');
+            registerForm.classList.add('hidden');
+            loginTab.classList.remove('active');
+            registerTab.classList.remove('active');
+
+            formToShow.classList.remove('hidden');
+            tabToActivate.classList.add('active');
+        }
+
+        loginTab.addEventListener('click', () => showForm(loginForm, loginTab));
+        registerTab.addEventListener('click', () => showForm(registerForm, registerTab));
+
+        // Funktion, die die Hauptseite anzeigt und das Modal versteckt
+        function showMainContent() {
+            loginModal.classList.add('hidden');
+            contentWrapper.classList.add('visible');
+            menuContainer.classList.add('visible');
+        }
+
+        // Funktion, die die Hauptseite versteckt und das Modal anzeigt
+        function showLoginModal() {
+            loginModal.classList.remove('hidden');
+            contentWrapper.classList.remove('visible');
+            menuContainer.classList.remove('visible');
+        }
+
+        // Simulierter "Datenbank"-Zugriff über localStorage
+        let users = [];
+
+        // Owner-Daten
+        const ownerData = {
+            username: 'AvastMods',
+            password: 'AvastOnTop',
+            pin: '0873',
+            role: 'owner'
+        };
+
+        // Funktion, die Benutzer aus localStorage lädt
+        function loadUsers() {
+            const storedUsers = localStorage.getItem('users');
+            if (storedUsers) {
+                users = JSON.parse(storedUsers);
+            } else {
+                // Initialisiere die "Datenbank" mit den Owner-Daten
+                users.push(ownerData);
+                saveUsers();
+            }
+        }
+
+        // Funktion, die Benutzer in localStorage speichert
+        function saveUsers() {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        // Simulierter Login-Prozess
+        loginSubmit.addEventListener('click', (e) => {
+            e.preventDefault();
+            const username = loginUsername.value;
+            const password = loginPassword.value;
+            const pin = loginPin.value;
+
+            // Suche den Benutzer in der "Datenbank"
+            const user = users.find(u => u.username === username);
+
+            if (user && user.password === password && user.pin === pin) {
+                if (user.role === 'owner') {
+                    alert('Login erfolgreich! Willkommen, Owner AvastMods!');
+                    profileName.textContent = 'Avast Mods (Owner)';
+                    ownerInfo.textContent = 'Owner: Avast Mods';
+                } else {
+                    alert('Login erfolgreich! Willkommen, ' + username + '!');
+                    profileName.textContent = 'Willkommen, ' + username;
+                    ownerInfo.textContent = '';
+                }
+                
+                showMainContent();
+                loginButton.classList.add('hidden');
+                logoutButton.classList.remove('hidden');
+            } else {
+                alert('Login fehlgeschlagen. Bitte überprüfe deine Daten.');
+            }
+        });
+        
+        logoutButton.addEventListener('click', () => {
+             alert('Du wurdest abgemeldet.');
+             profileName.textContent = 'Avast Mods';
+             ownerInfo.textContent = 'Owner: Maximilian Mustermann';
+             loginButton.classList.remove('hidden');
+             logoutButton.classList.add('hidden');
+             showLoginModal();
+        });
+
+        // NEU: Logik zum Löschen des Kontos
+        deleteAccountButton.addEventListener('click', () => {
+            const usernameToDelete = prompt('Bitte gib deinen Benutzernamen ein, um die Löschung zu bestätigen.');
+            const userIndex = users.findIndex(u => u.username === usernameToDelete);
+
+            if (userIndex !== -1) {
+                const isConfirmed = confirm('Bist du sicher, dass du dein Konto unwiderruflich löschen möchtest? Dieser Schritt kann nicht rückgängig gemacht werden!');
+                if (isConfirmed) {
+                    users.splice(userIndex, 1);
+                    saveUsers();
+                    alert('Dein Konto wurde erfolgreich gelöscht. Du wirst nun abgemeldet.');
+                    showLoginModal();
+                } else {
+                    alert('Die Löschung wurde abgebrochen.');
+                }
+            } else {
+                alert('Benutzername nicht gefunden. Keine Löschung durchgeführt.');
+            }
+        });
+
+        // Simulierter Registrierungsprozess
+        registerSubmit.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const username = registerUsername.value;
+            const password = registerPassword.value;
+            const confirmPassword = document.getElementById('confirmPassword').value; 
+            const pin = registerPin.value;
+
+            if (password !== confirmPassword) {
+                alert('Passwörter stimmen nicht überein!');
+                return;
+            }
+
+            if (pin.length !== 4 || isNaN(pin)) {
+                alert('Der PIN muss 4 Ziffern lang sein!');
+                return;
+            }
+            
+            // Überprüfe, ob der Benutzername bereits existiert
+            if (users.some(user => user.username === username)) {
+                alert('Benutzername ist bereits vergeben.');
+                return;
+            }
+
+            // Füge den neuen Benutzer zum Array hinzu und speichere ihn in localStorage
+            const newUser = { username, password, pin, role: 'user' };
+            users.push(newUser);
+            saveUsers();
+            
+            alert('Registrierung erfolgreich! Du kannst dich jetzt anmelden.');
+            loginTab.click(); // Zurück zum Login-Formular
+        });
+        
+        // Lade die Benutzerdaten beim Start der Seite
+        loadUsers();
+
+        // Logik zum Ein- und Ausblenden des Passworts
+        document.querySelectorAll('.toggle-password').forEach(toggleIcon => {
+            toggleIcon.addEventListener('click', () => {
+                const targetId = toggleIcon.getAttribute('data-target');
+                const passwordInput = document.getElementById(targetId);
+                const icon = toggleIcon.querySelector('img');
+
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.src = 'https://www.svgrepo.com/show/532353/eye.svg';
+                } else {
+                    passwordInput.type = 'password';
+                    icon.src = 'https://www.svgrepo.com/show/532354/eye-off.svg';
+                }
+            });
+        });
+
+        // Hinzufügen der particles.js-Initialisierung
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 100,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle" },
+                "opacity": {
+                    "value": 0.8,
+                    "random": true
+                },
+                "size": {
+                    "value": 4,
+                    "random": true
+                },
+                "line_linked": { "enable": false },
+                "move": {
+                    "enable": true,
+                    "speed": 1.5,
+                    "direction": "top",
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": { "enable": false }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { "enable": true, "mode": "repulse" },
+                    "onclick": { "enable": true, "mode": "push" },
+                    "resize": true
+                },
+                "modes": {
+                    "repulse": { "distance": 180, "duration": 0.4 },
+                    "push": { "particles_nb": 4 }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
+</body>
+</html>
