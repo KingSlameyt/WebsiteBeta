@@ -57,7 +57,6 @@
         }
 
         .header h1 {
-            /* KORREKTUR: Schriftfarbe direkt an primary-color binden */
             color: var(--primary-color);
             font-weight: 300;
             letter-spacing: 2px;
@@ -159,7 +158,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
-        /* Angepasst, um CSS-Variablen zu verwenden */
         .tiktok-btn, .instagram-btn, .twitch-btn { background-color: var(--primary-color); }
         .youtube-btn, .twitter-btn, .website-btn { background-color: var(--secondary-color); }
 
@@ -168,11 +166,11 @@
             top: 20px;
             right: 20px;
             z-index: 1000;
-            display: none; /* Menü standardmäßig versteckt */
+            display: none;
         }
 
         .menu-container.visible {
-            display: block; /* Menü sichtbar nach dem Login */
+            display: block;
         }
 
         .menu-toggle {
@@ -240,7 +238,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* NEUER CSS-Code für das Login-Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -248,7 +245,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.85);
-            display: flex; /* Standardmäßig sichtbar */
+            display: flex;
             justify-content: center;
             align-items: center;
             z-index: 2000;
@@ -366,11 +363,10 @@
             display: none;
         }
 
-        /* NEU: Stil für die Account-Info-Box */
         .account-info-box {
             position: absolute;
             top: 50%;
-            left: -100px; /* Positionierung neben dem Button */
+            left: -100px;
             transform: translateY(-50%);
             background-color: rgba(30, 30, 30, 0.95);
             color: #f0f0f0;
@@ -388,12 +384,11 @@
         }
         
         .account-info-box .warning {
-            color: #ff6347; /* Tomatenrot */
+            color: #ff6347;
             font-size: 12px;
             margin-top: 10px;
         }
         
-        /* NEU: Checkbox-Stil */
         .checkbox-container {
             display: flex;
             align-items: center;
@@ -411,7 +406,6 @@
             margin: 0;
         }
         
-        /* NEU: Stil für den Farbwechsler */
         .color-changer-container {
             display: none;
             align-items: center;
@@ -457,12 +451,13 @@
                     <label for="colorPicker" style="color: #fff; font-size: 14px;">Wähle eine Farbe:</label>
                     <input type="color" id="colorPicker" value="#470000">
                 </div>
-                <a href="#" id="loginButton" class="settings-button hidden">Login</a>
-                <a href="#" id="logoutButton" class="settings-button">Logout</a>
-                <a href="#" id="deleteAccountButton" class="settings-button">Konto löschen</a>
                 <a href="#" id="editInfoBoxButton" class="settings-button">Infobox bearbeiten</a>
                 <a href="#" id="changeProfilePicButton" class="settings-button">Profilbild ändern</a>
                 <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
+                
+                <a href="#" id="loginButton" class="settings-button hidden">Login</a>
+                <a href="#" id="logoutButton" class="settings-button">Logout</a>
+                <a href="#" id="deleteAccountButton" class="settings-button">Konto löschen</a>
                 
                 <div id="accountInfoBox" class="account-info-box">
                     <h4>Konto-Informationen</h4>
@@ -579,14 +574,12 @@
         // Globale Variable, um den angemeldeten Benutzer zu speichern
         let loggedInUser = null;
 
-        // Bestehendes Skript für Partikel und Menü
         const menuToggle = document.getElementById('menuToggle');
         const settingsMenu = document.getElementById('settingsMenu');
         const colorChangerContainer = document.getElementById('colorChangerContainer');
 
         menuToggle.addEventListener('click', () => {
             settingsMenu.classList.toggle('active');
-            // Schließe andere Fenster, wenn das Hauptmenü geöffnet wird
             accountInfoBox.style.display = 'none';
             colorChangerContainer.style.display = 'none';
         });
@@ -603,7 +596,6 @@
             }
         });
 
-        // NEUES SKRIPT für das Modal, Login, Registrierung und Info-Box Bearbeitung
         const contentWrapper = document.querySelector('.content-wrapper');
         const menuContainer = document.getElementById('menuContainer');
         const loginModal = document.getElementById('loginModal');
@@ -621,35 +613,29 @@
         const loginSubmit = document.getElementById('loginSubmit');
         const registerSubmit = document.getElementById('registerSubmit');
         
-        // NEU: Input-Felder für den Login-Teil
         const loginUsernameInput = document.getElementById('loginUsername');
         const loginPasswordInput = document.getElementById('loginPassword');
         const loginPinInput = document.getElementById('loginPin');
         const saveLoginDataCheckbox = document.getElementById('saveLoginData');
 
-        // NEU: Elemente für die Info-Box-Bearbeitung
         const infoBox = document.getElementById('infoBox');
         const editInfoBoxButton = document.getElementById('editInfoBoxButton');
         
-        // NEU: Elemente für das Profilbild
         const profileIcon = document.getElementById('profileIcon');
         const menuTogglePic = document.getElementById('menuTogglePic');
         const changeProfilePicButton = document.getElementById('changeProfilePicButton');
         const profilePicInput = document.getElementById('profilePicInput');
 
-        // NEU: Elemente für die Konto-Info-Box
         const testButton = document.getElementById('testButton');
         const accountInfoBox = document.getElementById('accountInfoBox');
         const accountUsername = document.getElementById('accountUsername');
         const accountPassword = document.getElementById('accountPassword');
         const accountPin = document.getElementById('accountPin');
         
-        // NEU: Elemente für den Farbwechsler
         const colorChangerButton = document.getElementById('colorChangerButton');
         const colorPicker = document.getElementById('colorPicker');
 
 
-        // Funktion zum Umschalten zwischen Formularen im Modal
         function showForm(formToShow, tabToActivate) {
             loginForm.classList.add('hidden');
             registerForm.classList.add('hidden');
@@ -663,24 +649,20 @@
         loginTab.addEventListener('click', () => showForm(loginForm, loginTab));
         registerTab.addEventListener('click', () => showForm(registerForm, registerTab));
 
-        // Funktion, die die Hauptseite anzeigt und das Modal versteckt
         function showMainContent() {
             loginModal.classList.add('hidden');
             contentWrapper.classList.add('visible');
             menuContainer.classList.add('visible');
         }
 
-        // Funktion, die die Hauptseite versteckt und das Modal anzeigt
         function showLoginModal() {
             loginModal.classList.remove('hidden');
             contentWrapper.classList.remove('visible');
             menuContainer.classList.remove('visible');
         }
 
-        // Simulierter "Datenbank"-Zugriff über localStorage
         let users = [];
 
-        // Owner-Daten
         const ownerData = {
             username: 'AvastMods',
             password: 'AvastOnTop',
@@ -688,45 +670,37 @@
             role: 'owner'
         };
 
-        // Funktion, die Benutzer aus localStorage lädt
         function loadUsers() {
             const storedUsers = localStorage.getItem('users');
             if (storedUsers) {
                 users = JSON.parse(storedUsers);
             } else {
-                // Initialisiere die "Datenbank" mit den Owner-Daten
                 users.push(ownerData);
                 saveUsers();
             }
         }
 
-        // Funktion, die Benutzer in localStorage speichert
         function saveUsers() {
             localStorage.setItem('users', JSON.stringify(users));
         }
 
-        // Simulierter Login-Prozess
         loginSubmit.addEventListener('click', (e) => {
             e.preventDefault();
             const username = loginUsernameInput.value;
             const password = loginPasswordInput.value;
             const pin = loginPinInput.value;
 
-            // Suche den Benutzer in der "Datenbank"
             const user = users.find(u => u.username === username);
 
             if (user && user.password === password && user.pin === pin) {
-                // NEU: Speichere den angemeldeten Benutzer
                 loggedInUser = user;
                 
-                // NEU: Speichere Login-Daten, wenn Checkbox aktiviert ist
                 if (saveLoginDataCheckbox.checked) {
                     localStorage.setItem('savedUsername', username);
                     localStorage.setItem('savedPassword', password);
                     localStorage.setItem('savedPin', pin);
                     alert('Login-Daten wurden gespeichert.');
                 } else {
-                    // Lösche gespeicherte Daten, falls Checkbox deaktiviert ist
                     localStorage.removeItem('savedUsername');
                     localStorage.removeItem('savedPassword');
                     localStorage.removeItem('savedPin');
@@ -736,12 +710,12 @@
                     alert('Login erfolgreich! Willkommen, Owner AvastMods!');
                     profileName.textContent = 'Avast Mods (Owner)';
                     ownerInfo.textContent = 'Owner: Avast Mods';
-                    editInfoBoxButton.style.display = 'block'; // Zeige den Bearbeitungs-Button
+                    editInfoBoxButton.style.display = 'block'; 
                 } else {
                     alert('Login erfolgreich! Willkommen, ' + username + '!');
                     profileName.textContent = 'Willkommen, ' + username;
                     ownerInfo.textContent = '';
-                    editInfoBoxButton.style.display = 'none'; // Verstecke den Bearbeitungs-Button
+                    editInfoBoxButton.style.display = 'none'; 
                 }
                 
                 showMainContent();
@@ -758,17 +732,14 @@
              ownerInfo.textContent = 'Owner: Maximilian Mustermann';
              loginButton.classList.remove('hidden');
              logoutButton.classList.add('hidden');
-             editInfoBoxButton.style.display = 'none'; // Verstecke den Bearbeitungs-Button
-             // NEU: Setze den angemeldeten Benutzer zurück
+             editInfoBoxButton.style.display = 'none';
              loggedInUser = null;
-             // NEU: Lösche gespeicherte Login-Daten beim Logout
              localStorage.removeItem('savedUsername');
              localStorage.removeItem('savedPassword');
              localStorage.removeItem('savedPin');
              showLoginModal();
         });
 
-        // NEU: Logik zum Löschen des Kontos
         deleteAccountButton.addEventListener('click', () => {
             if (!loggedInUser) {
                 alert('Bitte melde dich zuerst an, um dein Konto zu löschen.');
@@ -784,7 +755,7 @@
                          users.splice(userIndex, 1);
                          saveUsers();
                          alert('Dein Konto wurde erfolgreich gelöscht. Du wirst nun abgemeldet.');
-                         loggedInUser = null; // Setze den Benutzer zurück
+                         loggedInUser = null;
                          showLoginModal();
                     }
                 } else {
@@ -795,7 +766,6 @@
             }
         });
 
-        // Simulierter Registrierungsprozess
         registerSubmit.addEventListener('click', async (e) => {
             e.preventDefault();
             const username = registerUsername.value;
@@ -813,25 +783,21 @@
                 return;
             }
             
-            // Überprüfe, ob der Benutzername bereits existiert
             if (users.some(user => user.username === username)) {
                 alert('Benutzername ist bereits vergeben.');
                 return;
             }
 
-            // Füge den neuen Benutzer zum Array hinzu und speichere ihn in localStorage
             const newUser = { username, password, pin, role: 'user' };
             users.push(newUser);
             saveUsers();
             
             alert('Registrierung erfolgreich! Du kannst dich jetzt anmelden.');
-            loginTab.click(); // Zurück zum Login-Formular
+            loginTab.click();
         });
         
-        // Lade die Benutzerdaten beim Start der Seite
         loadUsers();
 
-        // Logik zum Ein- und Ausblenden des Passworts
         document.querySelectorAll('.toggle-password').forEach(toggleIcon => {
             toggleIcon.addEventListener('click', () => {
                 const targetId = toggleIcon.getAttribute('data-target');
@@ -848,31 +814,26 @@
             });
         });
 
-        // NEU: Logik zum Bearbeiten und Speichern der Infobox
         let isEditing = false;
         editInfoBoxButton.addEventListener('click', (e) => {
             e.preventDefault();
             if (!isEditing) {
-                // Bearbeitungsmodus aktivieren
                 infoBox.setAttribute('contenteditable', 'true');
                 infoBox.classList.add('editable-mode');
                 editInfoBoxButton.textContent = 'Speichern';
                 alert('Bearbeitungsmodus aktiviert. Du kannst die Infobox jetzt direkt bearbeiten.');
                 isEditing = true;
             } else {
-                // Bearbeitungsmodus deaktivieren und speichern
                 infoBox.setAttribute('contenteditable', 'false');
                 infoBox.classList.remove('editable-mode');
                 editInfoBoxButton.textContent = 'Infobox bearbeiten';
                 
-                // Speichere den Inhalt im localStorage
                 localStorage.setItem('infoBoxContent', infoBox.innerHTML);
                 alert('Änderungen gespeichert.');
                 isEditing = false;
             }
         });
 
-        // NEU: Lade den gespeicherten Infobox-Inhalt beim Start
         function loadInfoBoxContent() {
             const savedContent = localStorage.getItem('infoBoxContent');
             if (savedContent) {
@@ -881,10 +842,9 @@
         }
         loadInfoBoxContent();
         
-        // NEU: Logik zum Ändern des Profilbildes
         changeProfilePicButton.addEventListener('click', (e) => {
             e.preventDefault();
-            profilePicInput.click(); // Öffnet den Dateiauswahl-Dialog
+            profilePicInput.click();
         });
 
         profilePicInput.addEventListener('change', (event) => {
@@ -893,10 +853,8 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const newImageSrc = e.target.result;
-                    // Aktualisiere beide Profilbilder
                     profileIcon.src = newImageSrc;
                     menuTogglePic.src = newImageSrc;
-                    // Speichere das neue Bild im localStorage
                     localStorage.setItem('profilePic', newImageSrc);
                     alert('Profilbild wurde erfolgreich geändert.');
                 };
@@ -904,7 +862,6 @@
             }
         });
 
-        // NEU: Lade das gespeicherte Profilbild beim Start der Seite
         function loadProfilePic() {
             const savedPic = localStorage.getItem('profilePic');
             if (savedPic) {
@@ -914,7 +871,6 @@
         }
         loadProfilePic();
 
-        // NEU: Logik für den "Test"-Button (zeigt Kontoinformationen)
         testButton.addEventListener('click', (e) => {
             e.preventDefault();
             if (!loggedInUser) {
@@ -922,17 +878,14 @@
                 return;
             }
 
-            // Fülle die Info-Box mit den Daten des angemeldeten Benutzers
             accountUsername.textContent = loggedInUser.username;
             accountPassword.textContent = loggedInUser.password;
             accountPin.textContent = loggedInUser.pin;
 
-            // Zeige die Box an oder verstecke sie, wenn sie bereits sichtbar ist
             const isVisible = accountInfoBox.style.display === 'block';
             accountInfoBox.style.display = isVisible ? 'none' : 'block';
         });
 
-        // NEU: Lade gespeicherte Login-Daten, wenn die Seite geladen wird
         function loadSavedLoginData() {
             const savedUsername = localStorage.getItem('savedUsername');
             const savedPassword = localStorage.getItem('savedPassword');
@@ -947,31 +900,25 @@
         }
         loadSavedLoginData();
         
-        // NEU: Logik für den Farbwechsler
         colorChangerButton.addEventListener('click', (e) => {
             e.preventDefault();
-            // Schalte die Anzeige des Farbwählers um
             const isVisible = colorChangerContainer.style.display === 'flex';
             colorChangerContainer.style.display = isVisible ? 'none' : 'flex';
         });
 
         colorPicker.addEventListener('input', (e) => {
             const selectedColor = e.target.value;
-            // Setze die primäre Farbe
             document.documentElement.style.setProperty('--primary-color', selectedColor);
 
-            // Berechne eine dunklere Farbe für die Sekundärfarbe und den Text
             const rgb = hexToRgb(selectedColor);
             if (rgb) {
                 const darkenedColor = `rgb(${Math.max(0, rgb.r - 20)}, ${Math.max(0, rgb.g - 20)}, ${Math.max(0, rgb.b - 20)})`;
                 document.documentElement.style.setProperty('--secondary-color', darkenedColor);
                 document.documentElement.style.setProperty('--border-color', selectedColor);
             }
-            // Speichere die gewählte Farbe in localStorage
             localStorage.setItem('themeColor', selectedColor);
         });
 
-        // Funktion zum Konvertieren von Hex in RGB
         function hexToRgb(hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             return result ? {
@@ -981,7 +928,6 @@
             } : null;
         }
 
-        // Lade die gespeicherte Farbe beim Start der Seite
         function loadTheme() {
             const savedColor = localStorage.getItem('themeColor');
             if (savedColor) {
@@ -997,7 +943,6 @@
         }
         loadTheme();
 
-        // Hinzufügen der particles.js-Initialisierung
         particlesJS('particles-js', {
             "particles": {
                 "number": {
